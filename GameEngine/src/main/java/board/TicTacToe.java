@@ -13,10 +13,11 @@ public class TicTacToe implements Board {
         return cells[row][col];
     }
     public void setCell(String symbol, Cell cell){
-        if(cells[cell.getRow()][cell.getCol()] != null){
+        if(cells[cell.getRow()][cell.getCol()] == null){
             cells[cell.getRow()][cell.getCol()] = symbol;
         }else{
-            throw new IllegalArgumentException();
+            System.out.println(this);
+            throw new IllegalArgumentException(cell.getRow() + " " + cell.getCol());
         }
 
     }
