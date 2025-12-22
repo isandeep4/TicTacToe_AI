@@ -1,7 +1,6 @@
 package api;
 import game.Board;
 import game.Cell;
-import game.GameResult;
 import game.Move;
 import board.TicTacToe;
 import user.Player;

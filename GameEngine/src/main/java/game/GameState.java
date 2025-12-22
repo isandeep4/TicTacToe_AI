@@ -1,10 +1,10 @@
 package game;
 
-public class GameResult {
+public class GameState {
     boolean isOver;
     String winner;
 
-    public GameResult(boolean isOver, String winner) {
+    public GameState(boolean isOver, String winner) {
         this.isOver = isOver;
         this.winner = winner;
     }
@@ -19,7 +19,7 @@ public class GameResult {
 
     @Override
     public String toString() {
-        return "GameResult{" +
+        return "GameState{" +
                 "isOver=" + isOver +
                 ", winner='" + winner + '\'' +
                 '}';

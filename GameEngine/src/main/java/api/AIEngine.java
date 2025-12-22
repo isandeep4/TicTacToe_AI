@@ -53,7 +53,7 @@ public class AIEngine {
                     Move move = new Move(new Cell(i, j), player);
                     TicTacToe boardCopy = board.copy();
                     boardCopy.move(move);
-                    if(ruleEngine.gameState(boardCopy).isOver()){
+                    if(ruleEngine.getState(boardCopy).isOver()){
                         return move;
                     }
                 }
@@ -66,7 +66,7 @@ public class AIEngine {
                     Move move = new Move(new Cell(i, j), player.flip());
                     TicTacToe boardCopy = board.copy();
                     boardCopy.move(move);
-                    if(ruleEngine.gameState(boardCopy).isOver()){
+                    if(ruleEngine.getState(boardCopy).isOver()){
                         return move;
                     }
                 }

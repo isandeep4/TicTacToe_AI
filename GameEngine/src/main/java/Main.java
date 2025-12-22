@@ -17,7 +17,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int row, col;
 
-        while (!ruleEngine.gameState(board).isOver()){
+        while (!ruleEngine.getState(board).isOver()){
             System.out.println("Make your move");
             System.out.println(board);
             Player human = new Player("X");
@@ -26,12 +26,12 @@ public class Main {
             col = scanner.nextInt();
             Move oppMove = new Move(new Cell(row, col), human);
             gameEngine.move(board, oppMove);
-            if(!ruleEngine.gameState(board).isOver()){
+            if(!ruleEngine.getState(board).isOver()){
                 Move computerMove = aiEngine.suggestMove(computer, board);
                 gameEngine.move(board, computerMove);
             }
         }
-        System.out.println("Game result: " + ruleEngine.gameState(board));
+        System.out.println("Game result: " + ruleEngine.getState(board));
         System.out.println(board);
     }
 }

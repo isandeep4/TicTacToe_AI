@@ -1,78 +1,77 @@
 package api;
 
 import board.TicTacToe;
-import game.Board;
-import game.GameResult;
+import game.*;
+import user.Player;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RuleEngine {
-    public GameResult gameState (Board board) {
-        if(board instanceof TicTacToe) {
-            TicTacToe board1 = (TicTacToe) board;
-            String firstCharacter = "-";
+    Map<String, RuleSet<TicTacToe>> ruleMap = new HashMap<>();
 
-            GameResult rowWin = findStreak((i, j) -> board1.getCell(i, j));
-            if (rowWin != null) return rowWin;
-
-            GameResult colWin = findStreak((i, j) -> board1.getCell(j, i));
-            if (colWin != null) return colWin;
-
-            GameResult diagWin = findDiagStreak((i) -> board1.getCell(i, i));
-            if(diagWin != null) return diagWin;
-
-            GameResult revDiagWin = findDiagStreak((i) -> board1.getCell(i, 2-i));
-            if(revDiagWin != null) return revDiagWin;
-
-            int countOfFilledCells = 0;
-            for (int i = 0; i < 3; i++) {
-                for(int j=0; j < 3; j++){
-                    if(board1.getCell(j, i) != null){
-                        countOfFilledCells++;
+    public RuleEngine(){
+        ruleMap.put(TicTacToe.class.getName(), TicTacToe.getRules());
+    }
+    public GameInfo getInfo(Board board){
+        if(board instanceof TicTacToe){
+            GameState gameState = getState(board);
+            final String[] players = new String[]{"X", "O"};
+            for(int i=0; i<2; i++){
+                Player player = new Player(players[i]);
+                boolean canStillWin = false;
+                Cell forkCell = null;
+                for(int j=0; j<3; j++){
+                    for(int k=0; k<3; k++){
+                        Board b = board.copy();
+                        b.move(new Move(new Cell(j, k), player));
+                        for(int l=0; l<3; l++){
+                            for(int m=0; m<3; m++){
+                                Board b1 = b.copy();
+                                b1.move(new Move(new Cell(l, m), player.flip()));
+                                if(getState(b1).getWinner().equals(player.flip().symbol())){
+                                    forkCell = new Cell(l, m);
+                                    canStillWin = true;
+                                    break;
+                                }
+                            }
+                            if (canStillWin){
+                                break;
+                            }
+                        }
+                        if(canStillWin){
+                            return new GameInfoBuilder().isOver(gameState.isOver())
+                                    .winner(gameState.getWinner())
+                                    .hasFork(true)
+                                    .forkCell(forkCell)
+                                    .player(player.flip())
+                                    .build();
+                        }
                     }
                 }
+
             }
-            if(countOfFilledCells == 9){
-                return new GameResult(true, "-");
-            }else{
-                return new GameResult(false, "-");
-            }
-        } else {
-            return new GameResult(false, "-");
+            return new GameInfoBuilder()
+                    .isOver(gameState.isOver())
+                    .winner(gameState.getWinner())
+                    .build();
+
+        }else{
+            throw new IllegalArgumentException();
         }
-
-
     }
-
-    private GameResult findStreak(BiFunction<Integer, Integer, String> next) {
-        for (int i = 0; i < 3; i++) {
-            boolean possibleStreak = true;
-            for (int j = 1; j < 3; j++) {
-                if (next.apply(i, j) == null || !next.apply(i,0).equals(next.apply(i,j))) {
-                    possibleStreak = false;
-                    break;
+    public GameState getState (Board board) {
+        if(board instanceof TicTacToe board1) {
+            for (Rule<TicTacToe> r:ruleMap.get(TicTacToe.class.getName())){
+                GameState gameState = r.condition.apply(board1);
+                if(gameState.isOver()){
+                    return gameState;
                 }
-                ;
             }
-            if(possibleStreak){
-                return new GameResult(true, next.apply(i,0));
-            }
+            return new GameState(false, "-");
+        } else {
+            throw new IllegalArgumentException();
         }
-        return null;
-    }
-    private GameResult findDiagStreak(Function<Integer, String> diag){
-        boolean isStreak = true;
-        for (int i = 0; i < 3; i++) {
-            if (diag.apply(i) != null && diag.apply(0).equals(diag.apply(i))) {
-                isStreak = false;
-                break;
-            }
-        }
-        if(isStreak){
-            return new GameResult(true, diag.apply(0));
-        }
-        return null;
     }
 }
 
