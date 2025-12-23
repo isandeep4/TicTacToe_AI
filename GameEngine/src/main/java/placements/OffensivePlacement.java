@@ -1,0 +1,43 @@
+package placements;
+
+import api.RuleEngine;
+import board.TicTacToe;
+import game.Cell;
+import game.Move;
+import user.Player;
+import utils.Utils;
+
+import java.util.Optional;
+
+public class OffensivePlacement implements Placement{
+    private static OffensivePlacement offensivePlacement;
+
+    public synchronized static Placement get(){
+        offensivePlacement = (OffensivePlacement) Utils.getIfNull(offensivePlacement, OffensivePlacement::new);
+        return offensivePlacement;
+    }
+    @Override
+    public Optional<Cell> place(TicTacToe board, Player player) {
+        return Optional.ofNullable(getOffensiveMove(board, player));
+    }
+
+    @Override
+    public Placement next() {
+        return DefensivePlacement.get();
+    }
+    private static Cell getOffensiveMove(TicTacToe board, Player player) {
+        for (int i = 0; i < 3; i++) {
+            for(int j=0; j < 3; j++){
+                if(board.getCell(i, j) == null){
+                    Move move = new Move(new Cell(i, j), player);
+                    TicTacToe boardCopy = board.copy();
+                    boardCopy.move(move);
+                    if(ruleEngine.getState(boardCopy).isOver()){
+                        return new Cell(i, j);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+}

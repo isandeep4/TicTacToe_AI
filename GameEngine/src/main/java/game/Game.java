@@ -1,5 +1,6 @@
 package game;
 
+import boards.Board;
 import user.Player;
 
 public class Game {

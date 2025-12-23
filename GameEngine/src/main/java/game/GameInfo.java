@@ -5,7 +5,7 @@ import user.Player;
 public class GameInfo {
     private final boolean isOver;
     private final String winner;
-    private final boolean hasFork;
+    public boolean hasFork;
     private final Player player;
     private final int numberOfSteps;
     private Cell forkCell;
@@ -17,5 +17,8 @@ public class GameInfo {
         this.player = player;
         this.numberOfSteps = numberOfSteps;
         this.forkCell = forkCell;
+    }
+    public Cell getForkCell(){
+        return this.forkCell;
     }
 }

@@ -1,6 +1,8 @@
 package api;
 
 import board.TicTacToe;
+import boards.Board;
+import boards.CellBoard;
 import game.*;
 import user.Player;
 
@@ -8,14 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RuleEngine {
-    Map<String, RuleSet<TicTacToe>> ruleMap = new HashMap<>();
+    Map<String, RuleSet> ruleMap = new HashMap<>();
 
     public RuleEngine(){
         ruleMap.put(TicTacToe.class.getName(), TicTacToe.getRules());
     }
-    public GameInfo getInfo(Board board){
-        if(board instanceof TicTacToe){
-            GameState gameState = getState(board);
+    public GameInfo getInfo(CellBoard cellBoard){
+        if(cellBoard instanceof TicTacToe){
+            GameState gameState = getState(cellBoard);
             final String[] players = new String[]{"X", "O"};
             for(int i=0; i<2; i++){
                 Player player = new Player(players[i]);
@@ -23,11 +25,11 @@ public class RuleEngine {
                 Cell forkCell = null;
                 for(int j=0; j<3; j++){
                     for(int k=0; k<3; k++){
-                        Board b = board.copy();
+                        CellBoard b = (CellBoard) cellBoard.copy();
                         b.move(new Move(new Cell(j, k), player));
                         for(int l=0; l<3; l++){
                             for(int m=0; m<3; m++){
-                                Board b1 = b.copy();
+                                CellBoard b1 = (CellBoard) b.copy();
                                 b1.move(new Move(new Cell(l, m), player.flip()));
                                 if(getState(b1).getWinner().equals(player.flip().symbol())){
                                     forkCell = new Cell(l, m);
@@ -62,7 +64,7 @@ public class RuleEngine {
     }
     public GameState getState (Board board) {
         if(board instanceof TicTacToe board1) {
-            for (Rule<TicTacToe> r:ruleMap.get(TicTacToe.class.getName())){
+            for (Rule r:ruleMap.get(TicTacToe.class.getName())){
                 GameState gameState = r.condition.apply(board1);
                 if(gameState.isOver()){
                     return gameState;

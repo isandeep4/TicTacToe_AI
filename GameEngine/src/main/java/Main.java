@@ -1,7 +1,7 @@
 import api.AIEngine;
 import api.GameEngine;
 import api.RuleEngine;
-import game.Board;
+import boards.Board;
 import game.Cell;
 import game.Move;
 import user.Player;
@@ -27,8 +27,8 @@ public class Main {
             Move oppMove = new Move(new Cell(row, col), human);
             gameEngine.move(board, oppMove);
             if(!ruleEngine.getState(board).isOver()){
-                Move computerMove = aiEngine.suggestMove(computer, board);
-                gameEngine.move(board, computerMove);
+                Cell computerMove = aiEngine.suggestMove(computer, board);
+                gameEngine.move(board, new Move(computerMove, computer));
             }
         }
         System.out.println("Game result: " + ruleEngine.getState(board));

@@ -1,5 +1,5 @@
 package api;
-import game.Board;
+import boards.Board;
 import game.Cell;
 import game.Move;
 import board.TicTacToe;
