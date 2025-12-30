@@ -12,7 +12,7 @@ import java.util.Optional;
 public class DefensivePlacement implements Placement{
     private static DefensivePlacement defensivePlacement;
 
-    public synchronized static Placement get(){
+    public synchronized static DefensivePlacement get(){
         defensivePlacement = (DefensivePlacement) Utils.getIfNull(defensivePlacement, DefensivePlacement::new);
         return defensivePlacement;
     }
@@ -31,8 +31,7 @@ public class DefensivePlacement implements Placement{
             for(int j=0; j < 3; j++){
                 if(board.getCell(i, j) == null){
                     Move move = new Move(new Cell(i, j), player.flip());
-                    TicTacToe boardCopy = board.copy();
-                    boardCopy.move(move);
+                    TicTacToe boardCopy = board.move(move);
                     if(ruleEngine.getState(boardCopy).isOver()){
                         return new Cell(i, j);
                     }

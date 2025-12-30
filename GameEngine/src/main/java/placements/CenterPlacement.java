@@ -10,7 +10,7 @@ import java.util.Optional;
 public class CenterPlacement implements Placement{
     private static CenterPlacement centerPlacement;
 
-    public synchronized static Placement get(){
+    public synchronized static CenterPlacement get(){
         centerPlacement = (CenterPlacement) Utils.getIfNull(centerPlacement, CenterPlacement::new);
         return centerPlacement;
     }

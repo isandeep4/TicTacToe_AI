@@ -1,13 +1,19 @@
 package board;
 
+import boards.Board;
 import boards.CellBoard;
 import game.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class TicTacToe implements CellBoard {
     String[][] cells = new String[3][3];
+    History history = new History();
 
     public static RuleSet getRules() {
         RuleSet rules = new RuleSet();
@@ -88,8 +94,11 @@ public class TicTacToe implements CellBoard {
     }
 
     @Override
-    public void move(Move move) {
-        setCell(move.getPlayer().symbol(), move.getCell());
+    public TicTacToe move(Move move) {
+        history.add(new Representation(this));
+        TicTacToe board = copy();
+        board.setCell(move.getPlayer().symbol(), move.getCell());
+        return board;
     }
 
     @Override
@@ -98,11 +107,48 @@ public class TicTacToe implements CellBoard {
         for (int i=0; i<3; i++){
             System.arraycopy(cells[i], 0, ticTacToe.cells[i], 0, 3);
         }
+        ticTacToe.history = history;
         return ticTacToe;
     }
 
     @Override
     public String getSymbol(int row, int col) {
         return cells[row][col];
+    }
+
+    public enum Symbol {
+        X("X"), O("O");
+        final String marker;
+        Symbol(String marker) {
+            this.marker = marker;
+        }
+
+        public String marker() {
+            return marker;
+        }
+    }
+}
+class History {
+    List<Representation> boards = new ArrayList<>();
+
+    public Representation getBoardAtMove(int moveIndex){
+        for (int i=0; i<boards.size() - (moveIndex + 1); i++){
+            boards.remove(boards.size()-1);
+        }
+        return boards.get(moveIndex);
+    }
+    public Representation undo(){
+        boards.remove(boards.size()-1);
+        return boards.get(boards.size()-1);
+    }
+    public void add(Representation representation){
+        boards.add(representation);
+    }
+}
+class Representation {
+    String representation;
+
+    public Representation(Board board){
+        representation = board.toString();
     }
 }

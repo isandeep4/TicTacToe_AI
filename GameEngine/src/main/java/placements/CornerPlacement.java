@@ -10,7 +10,7 @@ import java.util.Optional;
 public class CornerPlacement implements Placement{
     private static CornerPlacement cornerPlacement;
 
-    public synchronized static Placement get(){
+    public synchronized static CornerPlacement get(){
         cornerPlacement = (CornerPlacement) Utils.getIfNull(cornerPlacement, CornerPlacement::new);
         return cornerPlacement;
     }
