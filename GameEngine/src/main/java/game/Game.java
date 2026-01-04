@@ -7,37 +7,34 @@ public class Game {
     private GameConfig gameConfig;
     private Board board;
     Player winner;
-    private int lastMoveInMillis;
+    private Integer lastMoveInMillis;
 
-    private int totalTimePerPlayer;
-    private int maxTimePerMove;
+    private Integer totalTimePerPlayer;
+    private Integer maxTimePerMove;
+
+    public Game(GameConfig gameConfig, Board board, Player winner, Integer lastMoveInMillis, Integer totalTimePerPlayer, Integer maxTimePerMove){
+        this.gameConfig = gameConfig;
+        this.board = board;
+        this.winner = winner;
+        this.lastMoveInMillis = lastMoveInMillis;
+        this.maxTimePerMove = maxTimePerMove;
+        this.totalTimePerPlayer = totalTimePerPlayer;
+    }
 
     public void move(Move move, int timestampInMillis){
         int timeTakenSinceLastMove = timestampInMillis - lastMoveInMillis;
+        int endTime = gameConfig.timePerMove != null ? maxTimePerMove : totalTimePerPlayer;
+        int timeTakenInMillis = gameConfig.timePerMove != null ? timeTakenSinceLastMove : move.getPlayer().getTotalTImeTaken();
         move.getPlayer().setTImeTaken(timeTakenSinceLastMove);
         if(gameConfig.timed){
-            if(gameConfig.timePerMove != null){
-                if(movedMadeInTime(timeTakenSinceLastMove)){
-                    board.move(move);
-                }else{
-                    winner = move.getPlayer().flip();
-                }
-            }else {
-                if (movedMadeInTime(move.getPlayer())) {
-                    board.move(move);
-                } else {
-                    winner = move.getPlayer().flip();
-                }
+            if(timeTakenInMillis < endTime){
+                board.move(move);
+            }else{
+                winner = move.getPlayer().flip();
             }
         }else{
             board.move(move);
         }
 
-    }
-    private boolean movedMadeInTime(int timeTakenSinceLastMove){
-        return timeTakenSinceLastMove < maxTimePerMove;
-    }
-    boolean movedMadeInTime(Player player){
-        return player.getTotalTImeTaken() < totalTimePerPlayer;
     }
 }
