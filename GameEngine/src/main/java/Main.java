@@ -1,8 +1,11 @@
 import api.*;
 import boards.Board;
+import event.*;
 import game.*;
 import user.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -18,9 +21,11 @@ public class Main {
         int row, col;
         Player human = new Player("X");
         Player computer = new Player("O");
+        EventBus eventBus = new EventBus();
+        eventBus.subscribe(new Subscriber((event -> emailService.send(new SendEmailCommand(event)))));
+        eventBus.subscribe(new Subscriber(event -> smsService.send(new SendSMSCommand(event))));
         if(human.getUser().activeAfter(10, TimeUnit.DAYS)){
-            emailService.send(new SendEmailCommandBuilder().user(human.getUser()).message("Welcome back").build());
-            smsService.send(new SendSMSCommandBuilder().user(human.getUser()).message("Welcome back").build());
+            eventBus.publish(new Event(human.getUser(), "Welcome back!", "sandymyspace.com", "ACTIVITY"));
         }
         while (!ruleEngine.getState(board).isOver()){
             System.out.println("Make your move");
@@ -35,8 +40,7 @@ public class Main {
             }
         }
         if(ruleEngine.getState(board).getWinner().equals(human.symbol())){
-            emailService.send(new SendEmailCommandBuilder().user(human.getUser()).message("Congratulation on your win!").build());
-            smsService.send(new SendSMSCommandBuilder().user(human.getUser()).message("Congratulation on your win!").build());
+            eventBus.publish(new Event(human.getUser(), "congratulation!", "sandymyspace.com", "WIN"));
         }
         System.out.println("Game result: " + ruleEngine.getState(board));
         System.out.println(board);

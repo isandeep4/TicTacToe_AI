@@ -1,5 +1,6 @@
 package game;
 
+import event.Event;
 import user.User;
 
 public class SendEmailCommand {
@@ -8,8 +9,9 @@ public class SendEmailCommand {
     String templateId;
     String template;
 
-    public SendEmailCommand(User user, String message) {
-       details = new NotificationDetails(user, message);
+    public SendEmailCommand(Event event) {
+       this.details = new NotificationDetails(event.getUser(), event.getMessage());
+       this.link = event.getLink();
     }
     public String getMessage(){
         return details.getMessage();
