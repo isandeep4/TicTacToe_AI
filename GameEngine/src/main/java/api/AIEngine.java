@@ -13,64 +13,22 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class AIEngine {
-    public Cell suggestMove(Player computer, Board board) {
+    StrategyFactory strategyFactory = new StrategyFactory();
+    public Cell suggestMove(Player player, Board board) {
         if(board instanceof TicTacToe) {
-            TicTacToe board1 = (TicTacToe) board;
-            Cell suggestions;
-            if(isStarting(board1)){
-                suggestions = getBasicMove(board1);
-            }else{
-                suggestions = getOptimalMove(board1, computer);
-            }
-            if(suggestions != null) return suggestions;
+            TicTacToe b = (TicTacToe) board;
+            Strategy strategy = strategyFactory.getStrategy(b, player);
+            Cell suggestions = strategy.getOptimalMove(b, player);
+
             throw new IllegalStateException();
         }else{
             throw new IllegalArgumentException();
         }
     }
-    private boolean isStarting(TicTacToe board1){
-        int count = 0;
-        for(int i=0; i < 3; i++){
-           for(int j=0; j < 3; j++){
-               if (board1.getCell(i, j) != null){
-                   count++;
-               }
-           }
-        }
-        return count < 3;
-    }
-    private Cell getBasicMove(TicTacToe board1){
-        for (int i = 0; i < 3; i++) {
-            for(int j=0; j < 3; j++){
-                if(board1.getCell(i, j) == null){
-                    return new Cell(i, j);
-                }
-            }
-        }
-        return null;
-    }
-    private Cell getSmartMove(TicTacToe board, Player player){
-        RuleEngine ruleEngine = new RuleEngine();
-        //victorious moves
-//        Cell winningMove = getOffensiveMove(board, player, ruleEngine);
-//        if (winningMove != null) return winningMove;
-//        //defensive moves
-//        Cell defensiveMove = getDefensiveMove(board, player, ruleEngine);
-//        if (defensiveMove != null) return defensiveMove;
-        return getBasicMove(board);
-    }
 
-    private Cell getOptimalMove(TicTacToe board, Player player){
-        Placement placement = OffensivePlacement.get();
-        while (placement != null){
-            Optional<Cell> place = placement.place(board, player);
-            if (place.isPresent()){
-                return place.get();
-            }
-            placement = placement.next();
-        }
-        return null;
-    }
+
+
+
 
 
 

@@ -1,5 +1,6 @@
 package game;
 
+import api.RuleEngine;
 import boards.Board;
 import user.Player;
 
@@ -11,6 +12,7 @@ public class Game {
 
     private Integer totalTimePerPlayer;
     private Integer maxTimePerMove;
+    private RuleEngine ruleEngine = new RuleEngine();
 
     public Game(GameConfig gameConfig, Board board, Player winner, Integer lastMoveInMillis, Integer totalTimePerPlayer, Integer maxTimePerMove){
         this.gameConfig = gameConfig;
@@ -22,19 +24,29 @@ public class Game {
     }
 
     public void move(Move move, int timestampInMillis){
-        int timeTakenSinceLastMove = timestampInMillis - lastMoveInMillis;
-        int endTime = gameConfig.timePerMove != null ? maxTimePerMove : totalTimePerPlayer;
-        int timeTakenInMillis = gameConfig.timePerMove != null ? timeTakenSinceLastMove : move.getPlayer().getTotalTImeTaken();
-        move.getPlayer().setTImeTaken(timeTakenSinceLastMove);
-        if(gameConfig.timed){
-            if(timeTakenInMillis < endTime){
-                board.move(move);
+        if(winner == null){
+            int timeTakenSinceLastMove = timestampInMillis - lastMoveInMillis;
+            move.getPlayer().setTImeTaken(timeTakenSinceLastMove);
+            if(gameConfig.timed){
+                moveForTimedGame(move, timeTakenSinceLastMove);
             }else{
-                winner = move.getPlayer().flip();
+                board = board.move(move);
             }
-        }else{
-            board.move(move);
+            if (winner == null && ruleEngine.getState(board).isOver()) {
+                winner = move.getPlayer();
+            }
         }
+    }
+    private void moveForTimedGame(Move move, int timeTakenSinceLastMove){
+        if (move.getPlayer().getTotalTImeTaken() < totalTimePerPlayer
+        && (gameConfig.timePerMove == null || timeTakenSinceLastMove < maxTimePerMove)) {
+            board = board.move(move);
+        } else {
+            winner = move.getPlayer().flip();
+        }
+    }
 
+    public Player getWinner() {
+        return winner;
     }
 }

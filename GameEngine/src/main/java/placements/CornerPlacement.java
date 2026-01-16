@@ -20,7 +20,7 @@ public class CornerPlacement implements Placement{
         final int[][] corners = new int[][]{{0, 0}, {0, 2}, {2, 0}, {2, 2}};
         for (int i=0; i<4; i++){
             if(board.getCell(corners[i][0], corners[i][1]) == null){
-                cornerPlace = new Cell(corners[i][0], corners[i][1]);
+                cornerPlace = Cell.getCell(corners[i][0], corners[i][1]);
             }
         }
         return Optional.ofNullable(cornerPlace);

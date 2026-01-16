@@ -27,7 +27,7 @@ public class RuleEngine {
                 for(int i=0; i<3; i++){
                     for(int j=0; j<3; j++){
                         if (ticTacToe.getSymbol(i, j) == null){
-                            TicTacToe b = ticTacToe.move(new Move(new Cell(i, j), player));
+                            TicTacToe b = ticTacToe.move(new Move(Cell.getCell(i, j), player));
                             DefensivePlacement defense = DefensivePlacement.get();
                             Optional<Cell> defenseCell = defense.place(b, player.flip());
                             if(defenseCell.isPresent()){
@@ -38,7 +38,7 @@ public class RuleEngine {
                                     return new GameInfoBuilder().isOver(gameState.isOver())
                                             .winner(gameState.getWinner())
                                             .hasFork(true)
-                                            .forkCell(new Cell(i, j))
+                                            .forkCell(Cell.getCell(i, j))
                                             .player(player.flip())
                                             .build();
                                 }

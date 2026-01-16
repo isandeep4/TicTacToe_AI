@@ -29,10 +29,10 @@ public class OffensivePlacement implements Placement{
         for (int i = 0; i < 3; i++) {
             for(int j=0; j < 3; j++){
                 if(board.getCell(i, j) == null){
-                    Move move = new Move(new Cell(i, j), player);
+                    Move move = new Move(Cell.getCell(i, j), player);
                     TicTacToe boardCopy = board.move(move);
                     if(ruleEngine.getState(boardCopy).isOver()){
-                        return new Cell(i, j);
+                        return Cell.getCell(i, j);
                     }
                 }
             }

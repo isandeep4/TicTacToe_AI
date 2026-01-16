@@ -32,7 +32,7 @@ public class Main {
             System.out.println(board);
             row = scanner.nextInt();
             col = scanner.nextInt();
-            Move oppMove = new Move(new Cell(row, col), human);
+            Move oppMove = new Move(Cell.getCell(row, col), human);
             gameEngine.move(board, oppMove);
             if(!ruleEngine.getState(board).isOver()){
                 Cell computerMove = aiEngine.suggestMove(computer, board);
